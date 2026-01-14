@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Message Board</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pathway-navy': '#002E5D',
+                        'pathway-blue': '#0062B8',
+                        'pathway-light': '#E6F0FA',
+                        'pathway-sky': '#B3D4FC',
+                        'pathway-gold': '#FFB81C',
+                        'pathway-white': '#FFFFFF',
+                        'pathway-gray': '#63666A',
+                        'pathway-dark': '#1A1A2E',
+                    },
+                    fontFamily: {
+                        'sans': ['Libre Franklin', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-sans bg-pathway-light min-h-screen text-pathway-dark">
+    <!-- Header Banner -->
+    <header class="bg-pathway-navy text-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-6 py-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-pathway-navy" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold tracking-tight">Message Board</h1>
+                            <p class="text-pathway-sky text-sm">Admin Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="bg-pathway-gold text-pathway-navy text-xs font-semibold px-3 py-1 rounded-full">Admin</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white rounded-xl p-5 shadow-sm border-l-4 border-pathway-navy">
+                <p class="text-sm text-pathway-gray mb-1">Total Messages</p>
+                <p class="text-2xl font-bold text-pathway-navy" id="total-count">0</p>
+            </div>
+            <div class="bg-white rounded-xl p-5 shadow-sm border-l-4 border-pathway-blue">
+                <p class="text-sm text-pathway-gray mb-1">Announcements</p>
+                <p class="text-2xl font-bold text-pathway-blue" id="announcement-count">0</p>
+            </div>
+            <div class="bg-white rounded-xl p-5 shadow-sm border-l-4 border-pathway-gold">
+                <p class="text-sm text-pathway-gray mb-1">Notices</p>
+                <p class="text-2xl font-bold text-pathway-gold" id="notice-count">0</p>
+            </div>
+        </div>
+
+        <!-- Create New Message Form -->
+        <div class="bg-white rounded-xl p-6 shadow-sm mb-8">
+            <h2 class="text-lg font-bold text-pathway-navy mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Create New Message
+            </h2>
+            <form id="message-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-pathway-gray mb-1">Title</label>
+                        <input type="text" id="title" name="title" required
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent"
+                            placeholder="Enter message title">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-pathway-gray mb-1">Type</label>
+                            <select id="type" name="type" required
+                                class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent">
+                                <option value="announcement">Announcement</option>
+                                <option value="notice">Notice</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-pathway-gray mb-1">Priority</label>
+                            <select id="priority" name="priority"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent">
+                                <option value="normal">Normal</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="pinned">Pinned</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-pathway-gray mb-1">Content</label>
+                    <textarea id="content" name="content" rows="3" required
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent resize-none"
+                        placeholder="Enter message content"></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-pathway-gray mb-1">Author</label>
+                        <input type="text" id="author" name="author" required
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent"
+                            placeholder="Enter author name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-pathway-gray mb-1">Author Initials</label>
+                        <input type="text" id="author_initials" name="author_initials" maxlength="2" required
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent"
+                            placeholder="e.g., IT">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="bg-pathway-navy text-white px-6 py-2 rounded-lg font-medium hover:bg-pathway-blue transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        Publish Message
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Messages List -->
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-pathway-navy flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                    All Messages
+                </h2>
+                <div class="flex gap-2">
+                    <button onclick="filterMessages('all')" class="filter-btn active px-3 py-1 text-sm rounded-lg bg-pathway-navy text-white" data-filter="all">All</button>
+                    <button onclick="filterMessages('announcement')" class="filter-btn px-3 py-1 text-sm rounded-lg bg-gray-100 text-pathway-gray hover:bg-pathway-light" data-filter="announcement">Announcements</button>
+                    <button onclick="filterMessages('notice')" class="filter-btn px-3 py-1 text-sm rounded-lg bg-gray-100 text-pathway-gray hover:bg-pathway-light" data-filter="notice">Notices</button>
+                </div>
+            </div>
+            <div id="messages-list" class="space-y-3">
+                <!-- Messages will be loaded here -->
+                <p class="text-center text-pathway-gray py-8">Loading messages...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <h3 class="text-lg font-bold text-pathway-navy mb-2">Delete Message</h3>
+            <p class="text-pathway-gray mb-4">Are you sure you want to delete this message? This action cannot be undone.</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 rounded-lg border border-gray-200 text-pathway-gray hover:bg-gray-50">Cancel</button>
+                <button onclick="confirmDelete()" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-pathway-sky/30 bg-white">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-pathway-gray">
+                <p>© 2026 BYU-Pathway Worldwide. All rights reserved.</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="hover:text-pathway-navy transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-pathway-navy transition-colors">Terms of Use</a>
+                    <a href="#" class="hover:text-pathway-navy transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = '/api';
+        let currentFilter = 'all';
+        let deleteMessageId = null;
+
+        // Load messages on page load
+        document.addEventListener('DOMContentLoaded', loadMessages);
+
+        // Form submission
+        document.getElementById('message-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_URL}/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    e.target.reset();
+                    loadMessages();
+                } else {
+                    alert('Failed to create message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to connect to server');
+            }
+        });
+
+        async function loadMessages() {
+            try {
+                const response = await fetch(`${API_URL}/messages`);
+                const messages = await response.json();
+                
+                // Update counts
+                const announcements = messages.filter(m => m.type === 'announcement');
+                const notices = messages.filter(m => m.type === 'notice');
+                document.getElementById('total-count').textContent = messages.length;
+                document.getElementById('announcement-count').textContent = announcements.length;
+                document.getElementById('notice-count').textContent = notices.length;
+                
+                // Render messages
+                renderMessages(messages);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('messages-list').innerHTML = 
+                    '<p class="text-center text-pathway-gray py-8">Failed to load messages. Make sure the server is running.</p>';
+            }
+        }
+
+        function renderMessages(messages) {
+            const filtered = currentFilter === 'all' 
+                ? messages 
+                : messages.filter(m => m.type === currentFilter);
+            
+            if (filtered.length === 0) {
+                document.getElementById('messages-list').innerHTML = 
+                    '<p class="text-center text-pathway-gray py-8">No messages found.</p>';
+                return;
+            }
+            
+            const html = filtered.map(msg => `
+                <div class="border border-gray-100 rounded-lg p-4 hover:bg-pathway-light/50 transition-colors" data-type="${msg.type}">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-semibold uppercase px-2 py-0.5 rounded ${
+                                    msg.type === 'announcement' 
+                                        ? 'bg-pathway-blue/10 text-pathway-blue' 
+                                        : 'bg-pathway-gold/20 text-pathway-gold'
+                                }">${msg.type}</span>
+                                ${msg.priority === 'urgent' ? '<span class="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-red-100 text-red-600">Urgent</span>' : ''}
+                                ${msg.priority === 'pinned' ? '<span class="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-pathway-light text-pathway-blue">Pinned</span>' : ''}
+                                <span class="text-xs text-pathway-gray">${formatDate(msg.created_at)}</span>
+                            </div>
+                            <h3 class="font-semibold text-pathway-navy">${escapeHtml(msg.title)}</h3>
+                            <p class="text-sm text-pathway-gray mt-1">${escapeHtml(msg.content)}</p>
+                            <p class="text-xs text-pathway-gray mt-2">By: ${escapeHtml(msg.author)}</p>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="deleteMessage(${msg.id})" class="w-8 h-8 rounded-lg flex items-center justify-center text-pathway-gray hover:bg-red-50 hover:text-red-600 transition-colors" title="Delete">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('messages-list').innerHTML = html;
+        }
+
+        function filterMessages(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.classList.remove('bg-gray-100', 'text-pathway-gray');
+                    btn.classList.add('bg-pathway-navy', 'text-white');
+                } else {
+                    btn.classList.remove('bg-pathway-navy', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-pathway-gray');
+                }
+            });
+            loadMessages();
+        }
+
+        function deleteMessage(id) {
+            deleteMessageId = id;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            deleteMessageId = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        async function confirmDelete() {
+            if (!deleteMessageId) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/messages/${deleteMessageId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    closeDeleteModal();
+                    loadMessages();
+                } else {
+                    alert('Failed to delete message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to connect to server');
+            }
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

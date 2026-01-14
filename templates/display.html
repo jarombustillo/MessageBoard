@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Board | BYU-Pathway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pathway-navy': '#002E5D',
+                        'pathway-blue': '#0062B8',
+                        'pathway-light': '#E6F0FA',
+                        'pathway-sky': '#B3D4FC',
+                        'pathway-gold': '#FFB81C',
+                        'pathway-white': '#FFFFFF',
+                        'pathway-gray': '#63666A',
+                        'pathway-dark': '#1A1A2E',
+                    },
+                    fontFamily: {
+                        'sans': ['Libre Franklin', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-down': 'fadeDown 0.6s ease-out',
+                        'fade-up': 'fadeUp 0.6s ease-out',
+                        'fade-up-delay': 'fadeUp 0.6s ease-out 0.15s backwards',
+                    },
+                    keyframes: {
+                        fadeDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .message-card {
+            animation: fadeUp 0.5s ease-out backwards;
+        }
+        .message-card:nth-child(1) { animation-delay: 0.1s; }
+        .message-card:nth-child(2) { animation-delay: 0.15s; }
+        .message-card:nth-child(3) { animation-delay: 0.2s; }
+        .message-card:nth-child(4) { animation-delay: 0.25s; }
+        .message-card:nth-child(5) { animation-delay: 0.3s; }
+        .message-card:nth-child(6) { animation-delay: 0.35s; }
+        
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .urgent-pulse::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #dc2626;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-ring 1.5s ease-out infinite;
+        }
+    </style>
+</head>
+<body class="font-sans bg-pathway-light min-h-screen text-pathway-dark">
+    <!-- Header Banner -->
+    <header class="bg-pathway-navy text-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-6 py-5 animate-fade-down">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-pathway-navy" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold tracking-tight">Message Board</h1>
+                            <p class="text-pathway-sky text-sm">BYU-Pathway Worldwide</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-pathway-sky">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <span>Stay Connected</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <!-- Board Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Announcements Section -->
+            <section class="animate-fade-up">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-xl bg-pathway-navy flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-pathway-navy">Announcements</h2>
+                </div>
+
+                <div id="announcements-list" class="flex flex-col gap-4">
+                    <p class="text-center text-pathway-gray py-8">Loading announcements...</p>
+                </div>
+            </section>
+
+            <!-- Notices Section -->
+            <section class="animate-fade-up-delay">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-xl bg-pathway-blue flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-pathway-navy">Notices</h2>
+                </div>
+
+                <div id="notices-list" class="flex flex-col gap-4">
+                    <p class="text-center text-pathway-gray py-8">Loading notices...</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-pathway-sky/30 bg-white">
+        <div class="max-w-6xl mx-auto px-6 py-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-pathway-gray">
+                <p>© 2026 BYU-Pathway Worldwide. All rights reserved.</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="hover:text-pathway-navy transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-pathway-navy transition-colors">Terms of Use</a>
+                    <a href="#" class="hover:text-pathway-navy transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = '/api';
+
+        // Load messages on page load
+        document.addEventListener('DOMContentLoaded', loadMessages);
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadMessages, 30000);
+
+        async function loadMessages() {
+            try {
+                const response = await fetch(`${API_URL}/messages`);
+                const messages = await response.json();
+                
+                const announcements = messages.filter(m => m.type === 'announcement');
+                const notices = messages.filter(m => m.type === 'notice');
+                
+                renderAnnouncements(announcements);
+                renderNotices(notices);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('announcements-list').innerHTML = 
+                    '<p class="text-center text-pathway-gray py-8">Failed to load messages.</p>';
+                document.getElementById('notices-list').innerHTML = 
+                    '<p class="text-center text-pathway-gray py-8">Failed to load messages.</p>';
+            }
+        }
+
+        function renderAnnouncements(announcements) {
+            if (announcements.length === 0) {
+                document.getElementById('announcements-list').innerHTML = 
+                    '<p class="text-center text-pathway-gray py-8">No announcements at this time.</p>';
+                return;
+            }
+
+            const html = announcements.map(msg => createAnnouncementCard(msg)).join('');
+            document.getElementById('announcements-list').innerHTML = html;
+        }
+
+        function renderNotices(notices) {
+            if (notices.length === 0) {
+                document.getElementById('notices-list').innerHTML = 
+                    '<p class="text-center text-pathway-gray py-8">No notices at this time.</p>';
+                return;
+            }
+
+            const html = notices.map(msg => createNoticeCard(msg)).join('');
+            document.getElementById('notices-list').innerHTML = html;
+        }
+
+        function createAnnouncementCard(msg) {
+            const borderColor = msg.priority === 'urgent' ? 'border-red-500' : 
+                               msg.priority === 'pinned' ? 'border-pathway-blue' : 'border-pathway-navy';
+            
+            return `
+                <article class="message-card bg-white rounded-xl p-5 border-l-4 ${borderColor} shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div class="flex items-center justify-between mb-3">
+                        ${getPriorityBadge(msg.priority)}
+                        <span class="text-sm text-pathway-gray">${formatDate(msg.created_at)}</span>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2 text-pathway-navy leading-snug">${escapeHtml(msg.title)}</h3>
+                    <p class="text-sm text-pathway-gray leading-relaxed">${escapeHtml(msg.content)}</p>
+                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-pathway-navy flex items-center justify-center text-xs font-semibold text-white">${escapeHtml(msg.author_initials)}</div>
+                            <span class="text-sm text-pathway-gray font-medium">${escapeHtml(msg.author)}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-pathway-gray hover:bg-pathway-light hover:text-pathway-navy transition-colors" title="Bookmark">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z"/></svg>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-pathway-gray hover:bg-pathway-light hover:text-pathway-navy transition-colors" title="Share">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function createNoticeCard(msg) {
+            const borderColor = msg.priority === 'urgent' ? 'border-red-500' : 
+                               msg.priority === 'pinned' ? 'border-pathway-blue' : 'border-pathway-gold';
+            
+            return `
+                <article class="message-card bg-white rounded-xl p-5 border-l-4 ${borderColor} shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div class="flex items-center justify-between mb-3">
+                        ${getPriorityBadge(msg.priority)}
+                        <span class="text-sm text-pathway-gray">${formatDate(msg.created_at)}</span>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2 text-pathway-navy leading-snug">${escapeHtml(msg.title)}</h3>
+                    <p class="text-sm text-pathway-gray leading-relaxed">${escapeHtml(msg.content)}</p>
+                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-pathway-gold flex items-center justify-center text-xs font-semibold text-pathway-navy">${escapeHtml(msg.author_initials)}</div>
+                            <span class="text-sm text-pathway-gray font-medium">${escapeHtml(msg.author)}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-pathway-gray hover:bg-pathway-light hover:text-pathway-navy transition-colors" title="Bookmark">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z"/></svg>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-pathway-gray hover:bg-pathway-light hover:text-pathway-navy transition-colors" title="Share">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function getPriorityBadge(priority) {
+            if (priority === 'urgent') {
+                return `
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-red-100 text-red-700">
+                        <span class="relative w-2 h-2">
+                            <span class="absolute w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                            <span class="absolute w-2 h-2 bg-red-500 rounded-full"></span>
+                        </span>
+                        Urgent
+                    </span>
+                `;
+            } else if (priority === 'pinned') {
+                return `
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-pathway-light text-pathway-blue">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+                        Pinned
+                    </span>
+                `;
+            } else {
+                return `
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-green-100 text-green-700">
+                        New
+                    </span>
+                `;
+            }
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
