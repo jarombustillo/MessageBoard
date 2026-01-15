@@ -50,7 +50,7 @@
         .slider-track {
             display: flex;
             height: 100vh;
-            animation: scroll linear infinite;
+            transition: transform 0.8s ease-in-out;
         }
 
         .slide {
@@ -260,14 +260,7 @@
             content: '⏸ Paused';
         }
 
-        @keyframes scroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
-        }
+        /* Animation handled by JavaScript for reliability */
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -340,7 +333,7 @@
         let currentSlide = 0;
         let isPlaying = true;
         let slideDuration = 5000; // 5 seconds per slide
-        let animationDuration = 0;
+        let autoplayInterval = null;
 
         document.addEventListener('DOMContentLoaded', loadEvents);
 
@@ -356,6 +349,7 @@
                     document.getElementById('slider-container').style.display = 'none';
                     document.getElementById('progress-dots').style.display = 'none';
                     document.getElementById('no-images').style.display = 'flex';
+                    stopAutoplay();
                 } else {
                     document.getElementById('slider-container').style.display = 'block';
                     document.getElementById('progress-dots').style.display = 'flex';
@@ -371,23 +365,20 @@
             const track = document.getElementById('slider-track');
             const dotsContainer = document.getElementById('progress-dots');
             
-            // Duplicate slides for infinite loop effect
-            const duplicatedSlides = [...allSlides, ...allSlides];
+            // Create slides (no duplication needed with JS approach)
+            track.innerHTML = allSlides.map((slide, index) => createSlide(slide, index)).join('');
             
-            // Create slides
-            track.innerHTML = duplicatedSlides.map((slide, index) => createSlide(slide, index)).join('');
-            
-            // Create progress dots (only for original slides)
+            // Create progress dots
             dotsContainer.innerHTML = allSlides.map((_, index) => 
                 `<div class="progress-dot ${index === 0 ? 'active' : ''}" data-index="${index}" onclick="goToSlide(${index})"></div>`
             ).join('');
 
-            // Calculate animation duration based on number of slides
-            animationDuration = allSlides.length * slideDuration;
-            track.style.animationDuration = `${animationDuration}ms`;
+            // Reset to first slide
+            currentSlide = 0;
+            updateSliderPosition();
             
-            // Start tracking current slide
-            startSlideTracking();
+            // Start autoplay
+            startAutoplay();
         }
 
         function createSlide(slide, index) {
@@ -443,66 +434,61 @@
             `;
         }
 
-        function startSlideTracking() {
-            // Track which slide is currently showing based on animation progress
-            setInterval(() => {
-                if (!isPlaying || allSlides.length === 0) return;
-                
-                const track = document.getElementById('slider-track');
-                const computedStyle = window.getComputedStyle(track);
-                const matrix = new DOMMatrix(computedStyle.transform);
-                const translateX = Math.abs(matrix.m41);
-                const slideWidth = window.innerWidth;
-                const currentIndex = Math.floor(translateX / slideWidth) % allSlides.length;
-                
-                updateProgressDots(currentIndex);
-            }, 100);
-        }
-
-        function updateProgressDots(index) {
-            if (currentSlide !== index) {
-                currentSlide = index;
-                document.querySelectorAll('.progress-dot').forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
+        function startAutoplay() {
+            stopAutoplay(); // Clear any existing interval
+            if (allSlides.length > 1) {
+                autoplayInterval = setInterval(() => {
+                    if (isPlaying) {
+                        nextSlide();
+                    }
+                }, slideDuration);
             }
         }
 
-        function goToSlide(index) {
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+                autoplayInterval = null;
+            }
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % allSlides.length;
+            updateSliderPosition();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + allSlides.length) % allSlides.length;
+            updateSliderPosition();
+        }
+
+        function updateSliderPosition() {
             const track = document.getElementById('slider-track');
-            const slideWidth = window.innerWidth;
-            
-            // Pause animation
-            track.style.animationPlayState = 'paused';
-            
-            // Calculate position
-            const position = index * slideWidth;
-            track.style.transform = `translateX(-${position}px)`;
-            
-            // Update dots
-            updateProgressDots(index);
-            
-            // Resume animation after a short delay
-            setTimeout(() => {
-                // Reset animation from current position
-                track.style.animation = 'none';
-                track.offsetHeight; // Trigger reflow
-                track.style.animation = `scroll ${animationDuration}ms linear infinite`;
-                track.style.animationPlayState = isPlaying ? 'running' : 'paused';
-            }, 100);
+            const position = currentSlide * 100;
+            track.style.transform = `translateX(-${position}vw)`;
+            updateProgressDots();
+        }
+
+        function updateProgressDots() {
+            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSliderPosition();
+            // Reset autoplay timer
+            startAutoplay();
         }
 
         // Pause on hover
         const sliderContainer = document.getElementById('slider-container');
         sliderContainer.addEventListener('mouseenter', () => {
-            const track = document.getElementById('slider-track');
-            track.style.animationPlayState = 'paused';
             isPlaying = false;
         });
 
         sliderContainer.addEventListener('mouseleave', () => {
-            const track = document.getElementById('slider-track');
-            track.style.animationPlayState = 'running';
             isPlaying = true;
         });
 
