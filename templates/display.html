@@ -25,272 +25,378 @@
                     fontFamily: {
                         'sans': ['Libre Franklin', 'sans-serif'],
                     },
-                    animation: {
-                        'fade-down': 'fadeDown 0.6s ease-out',
-                        'fade-up': 'fadeUp 0.6s ease-out',
-                    },
-                    keyframes: {
-                        fadeDown: {
-                            '0%': { opacity: '0', transform: 'translateY(-20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        fadeUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                    },
                 },
             },
         }
     </script>
     <style>
-        .event-card {
-            animation: fadeUp 0.5s ease-out backwards;
-        }
-        .event-card:nth-child(1) { animation-delay: 0.1s; }
-        .event-card:nth-child(2) { animation-delay: 0.15s; }
-        .event-card:nth-child(3) { animation-delay: 0.2s; }
-        .event-card:nth-child(4) { animation-delay: 0.25s; }
-        .event-card:nth-child(5) { animation-delay: 0.3s; }
-        .event-card:nth-child(6) { animation-delay: 0.35s; }
-        
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Carousel styles */
-        .carousel {
-            position: relative;
+        body {
             overflow: hidden;
-        }
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-        .carousel-slide {
-            min-width: 100%;
-            position: relative;
-        }
-        .carousel-slide img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 46, 93, 0.8);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-            z-index: 10;
-        }
-        .carousel-btn:hover {
-            background: rgba(0, 98, 184, 0.9);
-        }
-        .carousel-btn.prev { left: 8px; }
-        .carousel-btn.next { right: 8px; }
-        .carousel-dots {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px 0;
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .carousel-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .carousel-dot.active {
-            background: white;
+            background: #000;
         }
 
-        /* Lightbox */
-        .lightbox {
+        .slider-container {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
+            overflow: hidden;
+        }
+
+        .slider-track {
+            display: flex;
+            height: 100vh;
+            animation: scroll linear infinite;
+        }
+
+        .slide {
+            flex-shrink: 0;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(0, 46, 93, 0.9) 0%,
+                rgba(0, 46, 93, 0.3) 30%,
+                transparent 60%
+            );
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 3rem 4rem;
+            color: white;
+        }
+
+        .slide-category {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .slide-title {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .slide-description {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .slide-meta {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .slide-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Header overlay */
+        .header-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: linear-gradient(to bottom, rgba(0,46,93,0.8) 0%, transparent 100%);
+            padding: 1.5rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 100;
         }
-        .lightbox.active {
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: #B3D4FC;
+        }
+
+        /* Progress indicators */
+        .progress-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
             display: flex;
+            gap: 0.5rem;
         }
-        .lightbox img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-        }
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 32px;
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
             cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .lightbox-nav {
-            position: absolute;
+
+        .progress-dot.active {
+            background: #FFB81C;
+            transform: scale(1.2);
+        }
+
+        .progress-dot:hover {
+            background: rgba(255,255,255,0.6);
+        }
+
+        /* No images placeholder */
+        .no-images {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #002E5D 0%, #0062B8 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .no-images svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            opacity: 0.5;
+        }
+
+        .no-images h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .no-images p {
+            font-size: 1.125rem;
+            opacity: 0.8;
+            max-width: 400px;
+        }
+
+        /* Pause on hover indicator */
+        .pause-indicator {
+            position: fixed;
             top: 50%;
-            transform: translateY(-50%);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
             color: white;
-            font-size: 48px;
-            cursor: pointer;
-            padding: 20px;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 60;
         }
-        .lightbox-prev { left: 10px; }
-        .lightbox-next { right: 10px; }
+
+        .slider-container:hover .pause-indicator {
+            opacity: 1;
+        }
+
+        .slider-container.playing:hover .pause-indicator::after {
+            content: '⏸ Paused';
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide-title {
+                font-size: 2rem;
+            }
+            .slide-description {
+                font-size: 1rem;
+            }
+            .slide-content {
+                padding: 2rem;
+            }
+            .header-overlay {
+                padding: 1rem;
+            }
+            .logo-text h1 {
+                font-size: 1.25rem;
+            }
+        }
     </style>
 </head>
-<body class="font-sans bg-pathway-light min-h-screen text-pathway-dark">
-    <!-- Header Banner -->
-    <header class="bg-pathway-navy text-white shadow-lg">
-        <div class="max-w-6xl mx-auto px-6 py-5 animate-fade-down">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-pathway-navy" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 class="text-xl font-bold tracking-tight">Calendar of Events</h1>
-                            <p class="text-pathway-sky text-sm">BYU-Pathway Worldwide</p>
-                        </div>
-                    </div>
+<body class="font-sans">
+    <!-- Header Overlay -->
+    <div class="header-overlay">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg class="w-7 h-7 text-pathway-navy" viewBox="0 0 24 24" fill="#002E5D">
+                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                    </svg>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2 text-sm text-pathway-sky">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        <span>Stay Connected</span>
-                    </div>
-                    <a href="/admin" class="flex items-center gap-2 bg-pathway-gold text-pathway-navy text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-white transition-colors">
-                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                        Admin
-                    </a>
+                <div class="logo-text">
+                    <h1>Calendar of Events</h1>
+                    <p>BYU-Pathway Worldwide</p>
                 </div>
             </div>
+            <a href="/admin" class="flex items-center gap-2 bg-pathway-gold text-pathway-navy text-sm font-semibold px-4 py-2 rounded-full hover:bg-white transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                Admin
+            </a>
         </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-6 py-8">
-        <!-- Category Filter -->
-        <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
-            <h2 class="text-2xl font-bold text-pathway-navy">Upcoming Events</h2>
-            <div class="flex gap-2 flex-wrap">
-                <button onclick="filterEvents('all')" class="filter-btn active px-4 py-2 text-sm rounded-full bg-pathway-navy text-white transition-colors" data-filter="all">All Events</button>
-                <button onclick="filterEvents('academic')" class="filter-btn px-4 py-2 text-sm rounded-full bg-white text-pathway-gray hover:bg-pathway-light transition-colors" data-filter="academic">📚 Academic</button>
-                <button onclick="filterEvents('social')" class="filter-btn px-4 py-2 text-sm rounded-full bg-white text-pathway-gray hover:bg-pathway-light transition-colors" data-filter="social">🎉 Social</button>
-                <button onclick="filterEvents('spiritual')" class="filter-btn px-4 py-2 text-sm rounded-full bg-white text-pathway-gray hover:bg-pathway-light transition-colors" data-filter="spiritual">🙏 Spiritual</button>
-                <button onclick="filterEvents('career')" class="filter-btn px-4 py-2 text-sm rounded-full bg-white text-pathway-gray hover:bg-pathway-light transition-colors" data-filter="career">💼 Career</button>
-            </div>
-        </div>
-
-        <!-- Events Grid -->
-        <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <p class="text-center text-pathway-gray py-8 col-span-full">Loading events...</p>
-        </div>
-    </main>
-
-    <!-- Lightbox for viewing images -->
-    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-        <span class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1, event)">&#10094;</span>
-        <img id="lightbox-img" src="" alt="">
-        <span class="lightbox-nav lightbox-next" onclick="lightboxNav(1, event)">&#10095;</span>
     </div>
 
-    <!-- Footer -->
-    <footer class="mt-12 border-t border-pathway-sky/30 bg-white">
-        <div class="max-w-6xl mx-auto px-6 py-6">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-pathway-gray">
-                <p>© 2026 BYU-Pathway Worldwide. All rights reserved.</p>
-                <div class="flex items-center gap-6">
-                    <a href="#" class="hover:text-pathway-navy transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-pathway-navy transition-colors">Terms of Use</a>
-                    <a href="#" class="hover:text-pathway-navy transition-colors">Contact</a>
-                </div>
-            </div>
+    <!-- Slider Container -->
+    <div class="slider-container playing" id="slider-container">
+        <div class="slider-track" id="slider-track">
+            <!-- Slides will be inserted here -->
         </div>
-    </footer>
+        <div class="pause-indicator" id="pause-indicator"></div>
+    </div>
+
+    <!-- Progress Dots -->
+    <div class="progress-container" id="progress-dots"></div>
+
+    <!-- No Images Placeholder -->
+    <div class="no-images" id="no-images" style="display: none;">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+        </svg>
+        <h2>No Images Yet</h2>
+        <p>Upload event images through the admin panel to see them displayed here.</p>
+        <a href="/admin" class="mt-6 inline-flex items-center gap-2 bg-pathway-gold text-pathway-navy font-semibold px-6 py-3 rounded-full hover:bg-white transition-colors">
+            Go to Admin
+        </a>
+    </div>
 
     <script>
         const API_URL = '/api';
-        let currentFilter = 'all';
-        let allEvents = [];
-        let lightboxImages = [];
-        let lightboxIndex = 0;
+        let allSlides = [];
+        let currentSlide = 0;
+        let isPlaying = true;
+        let slideDuration = 5000; // 5 seconds per slide
+        let animationDuration = 0;
 
-        // Load events on page load
         document.addEventListener('DOMContentLoaded', loadEvents);
 
-        // Auto-refresh every 30 seconds
-        setInterval(loadEvents, 30000);
+        // Auto-refresh data every 60 seconds
+        setInterval(loadEvents, 60000);
 
         async function loadEvents() {
             try {
-                const response = await fetch(`${API_URL}/events`);
-                allEvents = await response.json();
-                renderEvents();
+                const response = await fetch(`${API_URL}/slider`);
+                allSlides = await response.json();
+
+                if (allSlides.length === 0) {
+                    document.getElementById('slider-container').style.display = 'none';
+                    document.getElementById('progress-dots').style.display = 'none';
+                    document.getElementById('no-images').style.display = 'flex';
+                } else {
+                    document.getElementById('slider-container').style.display = 'block';
+                    document.getElementById('progress-dots').style.display = 'flex';
+                    document.getElementById('no-images').style.display = 'none';
+                    renderSlider();
+                }
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('events-grid').innerHTML = 
-                    '<p class="text-center text-pathway-gray py-8 col-span-full">Failed to load events.</p>';
             }
         }
 
-        function renderEvents() {
-            const filtered = currentFilter === 'all' 
-                ? allEvents 
-                : allEvents.filter(e => e.category === currentFilter);
+        function renderSlider() {
+            const track = document.getElementById('slider-track');
+            const dotsContainer = document.getElementById('progress-dots');
             
-            if (filtered.length === 0) {
-                document.getElementById('events-grid').innerHTML = 
-                    '<p class="text-center text-pathway-gray py-8 col-span-full">No events found for this category.</p>';
-                return;
-            }
+            // Duplicate slides for infinite loop effect
+            const duplicatedSlides = [...allSlides, ...allSlides];
+            
+            // Create slides
+            track.innerHTML = duplicatedSlides.map((slide, index) => createSlide(slide, index)).join('');
+            
+            // Create progress dots (only for original slides)
+            dotsContainer.innerHTML = allSlides.map((_, index) => 
+                `<div class="progress-dot ${index === 0 ? 'active' : ''}" data-index="${index}" onclick="goToSlide(${index})"></div>`
+            ).join('');
 
-            const html = filtered.map((event, index) => createEventCard(event, index)).join('');
-            document.getElementById('events-grid').innerHTML = html;
-
-            // Initialize carousels
-            document.querySelectorAll('.carousel').forEach(initCarousel);
+            // Calculate animation duration based on number of slides
+            animationDuration = allSlides.length * slideDuration;
+            track.style.animationDuration = `${animationDuration}ms`;
+            
+            // Start tracking current slide
+            startSlideTracking();
         }
 
-        function createEventCard(event, index) {
+        function createSlide(slide, index) {
             const categoryColors = {
-                'general': 'border-pathway-gray',
-                'academic': 'border-blue-500',
-                'social': 'border-pink-500',
-                'spiritual': 'border-purple-500',
-                'career': 'border-green-500'
-            };
-            
-            const categoryBadges = {
-                'general': 'bg-gray-100 text-pathway-gray',
-                'academic': 'bg-blue-100 text-blue-700',
-                'social': 'bg-pink-100 text-pink-700',
-                'spiritual': 'bg-purple-100 text-purple-700',
-                'career': 'bg-green-100 text-green-700'
+                'general': 'background: rgba(99, 102, 106, 0.9);',
+                'academic': 'background: rgba(59, 130, 246, 0.9);',
+                'social': 'background: rgba(236, 72, 153, 0.9);',
+                'spiritual': 'background: rgba(147, 51, 234, 0.9);',
+                'career': 'background: rgba(34, 197, 94, 0.9);'
             };
 
             const categoryEmojis = {
@@ -301,179 +407,108 @@
                 'career': '💼'
             };
 
-            const hasImages = event.images && event.images.length > 0;
+            // Use the image URL directly from the API
+            const imageUrl = slide.image;
 
             return `
-                <article class="event-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 border-t-4 ${categoryColors[event.category] || categoryColors['general']}">
-                    ${hasImages ? createCarousel(event, index) : `
-                        <div class="h-48 bg-gradient-to-br from-pathway-light to-pathway-sky flex items-center justify-center">
-                            <span class="text-6xl">${categoryEmojis[event.category] || '📅'}</span>
-                        </div>
-                    `}
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            <span class="text-xs font-semibold uppercase px-2 py-1 rounded-full ${categoryBadges[event.category] || categoryBadges['general']}">${event.category}</span>
-                            <span class="text-xs text-pathway-gray">${formatDate(event.event_date)}</span>
-                        </div>
-                        <h3 class="font-bold text-lg text-pathway-navy mb-2 leading-tight">${escapeHtml(event.title)}</h3>
-                        <p class="text-sm text-pathway-gray mb-3 line-clamp-3">${escapeHtml(event.description)}</p>
-                        
-                        <div class="space-y-1 text-sm">
-                            ${event.event_time ? `
-                                <div class="flex items-center gap-2 text-pathway-gray">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                                    <span>${escapeHtml(event.event_time)}</span>
-                                </div>
-                            ` : ''}
-                            ${event.location ? `
-                                <div class="flex items-center gap-2 text-pathway-gray">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                                    <span>${escapeHtml(event.location)}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-full bg-pathway-navy flex items-center justify-center text-xs font-semibold text-white">${escapeHtml(event.author_initials)}</div>
-                                <span class="text-sm text-pathway-gray">${escapeHtml(event.author)}</span>
+                <div class="slide">
+                    <img src="${imageUrl}" alt="${escapeHtml(slide.title)}" loading="lazy">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <span class="slide-category" style="${categoryColors[slide.category] || categoryColors['general']}">
+                            ${categoryEmojis[slide.category] || '📅'} ${slide.category}
+                        </span>
+                        <h2 class="slide-title">${escapeHtml(slide.title)}</h2>
+                        <p class="slide-description">${escapeHtml(slide.description)}</p>
+                        <div class="slide-meta">
+                            <div class="slide-meta-item">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+                                <span>${formatDate(slide.date)}</span>
                             </div>
-                            ${hasImages ? `<span class="text-xs text-pathway-gray">${event.images.length} photo${event.images.length > 1 ? 's' : ''}</span>` : ''}
+                            ${slide.time ? `
+                                <div class="slide-meta-item">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                    <span>${escapeHtml(slide.time)}</span>
+                                </div>
+                            ` : ''}
+                            ${slide.location ? `
+                                <div class="slide-meta-item">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    <span>${escapeHtml(slide.location)}</span>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
-                </article>
-            `;
-        }
-
-        function createCarousel(event, eventIndex) {
-            if (!event.images || event.images.length === 0) return '';
-            
-            const slides = event.images.map((img, imgIndex) => `
-                <div class="carousel-slide">
-                    <img src="/uploads/${img.filename}" alt="${escapeHtml(event.title)}" 
-                         onclick="openLightbox(${eventIndex}, ${imgIndex})" 
-                         class="cursor-pointer hover:opacity-90 transition-opacity">
-                </div>
-            `).join('');
-
-            const dots = event.images.length > 1 ? `
-                <div class="carousel-dots">
-                    ${event.images.map((_, i) => `<span class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`).join('')}
-                </div>
-            ` : '';
-
-            const navButtons = event.images.length > 1 ? `
-                <button class="carousel-btn prev" onclick="carouselMove(this, -1)">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                </button>
-                <button class="carousel-btn next" onclick="carouselMove(this, 1)">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                </button>
-            ` : '';
-
-            return `
-                <div class="carousel" data-index="0">
-                    <div class="carousel-track">
-                        ${slides}
-                    </div>
-                    ${navButtons}
-                    ${dots}
                 </div>
             `;
         }
 
-        function initCarousel(carousel) {
-            const dots = carousel.querySelectorAll('.carousel-dot');
-            dots.forEach(dot => {
-                dot.addEventListener('click', () => {
-                    const index = parseInt(dot.dataset.index);
-                    goToSlide(carousel, index);
+        function startSlideTracking() {
+            // Track which slide is currently showing based on animation progress
+            setInterval(() => {
+                if (!isPlaying || allSlides.length === 0) return;
+                
+                const track = document.getElementById('slider-track');
+                const computedStyle = window.getComputedStyle(track);
+                const matrix = new DOMMatrix(computedStyle.transform);
+                const translateX = Math.abs(matrix.m41);
+                const slideWidth = window.innerWidth;
+                const currentIndex = Math.floor(translateX / slideWidth) % allSlides.length;
+                
+                updateProgressDots(currentIndex);
+            }, 100);
+        }
+
+        function updateProgressDots(index) {
+            if (currentSlide !== index) {
+                currentSlide = index;
+                document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
                 });
-            });
+            }
         }
 
-        function carouselMove(btn, direction) {
-            const carousel = btn.closest('.carousel');
-            const currentIndex = parseInt(carousel.dataset.index);
-            const slides = carousel.querySelectorAll('.carousel-slide');
-            let newIndex = currentIndex + direction;
+        function goToSlide(index) {
+            const track = document.getElementById('slider-track');
+            const slideWidth = window.innerWidth;
             
-            if (newIndex < 0) newIndex = slides.length - 1;
-            if (newIndex >= slides.length) newIndex = 0;
+            // Pause animation
+            track.style.animationPlayState = 'paused';
             
-            goToSlide(carousel, newIndex);
-        }
-
-        function goToSlide(carousel, index) {
-            const track = carousel.querySelector('.carousel-track');
-            const dots = carousel.querySelectorAll('.carousel-dot');
+            // Calculate position
+            const position = index * slideWidth;
+            track.style.transform = `translateX(-${position}px)`;
             
-            track.style.transform = `translateX(-${index * 100}%)`;
-            carousel.dataset.index = index;
+            // Update dots
+            updateProgressDots(index);
             
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
+            // Resume animation after a short delay
+            setTimeout(() => {
+                // Reset animation from current position
+                track.style.animation = 'none';
+                track.offsetHeight; // Trigger reflow
+                track.style.animation = `scroll ${animationDuration}ms linear infinite`;
+                track.style.animationPlayState = isPlaying ? 'running' : 'paused';
+            }, 100);
         }
 
-        // Lightbox functions
-        function openLightbox(eventIndex, imageIndex) {
-            const event = (currentFilter === 'all' ? allEvents : allEvents.filter(e => e.category === currentFilter))[eventIndex];
-            lightboxImages = event.images.map(img => `/uploads/${img.filename}`);
-            lightboxIndex = imageIndex;
-            
-            document.getElementById('lightbox-img').src = lightboxImages[lightboxIndex];
-            document.getElementById('lightbox').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeLightbox(e) {
-            if (e && e.target !== document.getElementById('lightbox') && e.target !== document.querySelector('.lightbox-close')) return;
-            document.getElementById('lightbox').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function lightboxNav(direction, e) {
-            e.stopPropagation();
-            lightboxIndex += direction;
-            if (lightboxIndex < 0) lightboxIndex = lightboxImages.length - 1;
-            if (lightboxIndex >= lightboxImages.length) lightboxIndex = 0;
-            document.getElementById('lightbox-img').src = lightboxImages[lightboxIndex];
-        }
-
-        // Keyboard navigation for lightbox
-        document.addEventListener('keydown', (e) => {
-            if (!document.getElementById('lightbox').classList.contains('active')) return;
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') lightboxNav(-1, e);
-            if (e.key === 'ArrowRight') lightboxNav(1, e);
+        // Pause on hover
+        const sliderContainer = document.getElementById('slider-container');
+        sliderContainer.addEventListener('mouseenter', () => {
+            const track = document.getElementById('slider-track');
+            track.style.animationPlayState = 'paused';
+            isPlaying = false;
         });
 
-        function filterEvents(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.dataset.filter === filter) {
-                    btn.classList.remove('bg-white', 'text-pathway-gray');
-                    btn.classList.add('bg-pathway-navy', 'text-white');
-                } else {
-                    btn.classList.remove('bg-pathway-navy', 'text-white');
-                    btn.classList.add('bg-white', 'text-pathway-gray');
-                }
-            });
-            renderEvents();
-        }
+        sliderContainer.addEventListener('mouseleave', () => {
+            const track = document.getElementById('slider-track');
+            track.style.animationPlayState = 'running';
+            isPlaying = true;
+        });
 
         function formatDate(dateStr) {
             const date = new Date(dateStr + 'T00:00:00');
-            const now = new Date();
-            const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
-            
-            let relative = '';
-            if (diffDays === 0) relative = '(Today)';
-            else if (diffDays === 1) relative = '(Tomorrow)';
-            else if (diffDays > 0 && diffDays <= 7) relative = `(In ${diffDays} days)`;
-            
-            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + (relative ? ` ${relative}` : '');
+            return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         }
 
         function escapeHtml(text) {

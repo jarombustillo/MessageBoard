@@ -100,7 +100,7 @@ def init_db():
 
 @app.route('/')
 def display_page():
-    """Public display page showing all events."""
+    """Public display page - Infinite autoplay image slider."""
     return render_template('display.html')
 
 
@@ -140,6 +140,51 @@ def get_events():
     
     conn.close()
     return jsonify(events)
+
+
+@app.route('/api/slider', methods=['GET'])
+def get_slider_images():
+    """Get all images with event details for the slider display."""
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Get all images joined with their event data
+    cursor.execute('''
+        SELECT 
+            ei.id as image_id,
+            ei.filename,
+            e.id as event_id,
+            e.title,
+            e.description,
+            e.event_date,
+            e.event_time,
+            e.location,
+            e.category,
+            e.author,
+            e.author_initials
+        FROM event_images ei
+        JOIN events e ON ei.event_id = e.id
+        ORDER BY e.event_date ASC, ei.uploaded_at DESC
+    ''')
+    
+    slides = []
+    for row in cursor.fetchall():
+        slides.append({
+            'image_id': row['image_id'],
+            'image': f"/uploads/{row['filename']}",
+            'event_id': row['event_id'],
+            'title': row['title'],
+            'description': row['description'],
+            'date': row['event_date'],
+            'time': row['event_time'],
+            'location': row['location'],
+            'category': row['category'],
+            'author': row['author'],
+            'author_initials': row['author_initials']
+        })
+    
+    conn.close()
+    return jsonify(slides)
 
 
 @app.route('/api/events/stats', methods=['GET'])
@@ -362,22 +407,23 @@ def get_events_by_category(category):
 
 if __name__ == '__main__':
     init_db()
-    print("=" * 50)
-    print("  Calendar of Events Server")
+    print("=" * 55)
+    print("  Calendar of Events - Image Slider Server")
     print("  BYU-Pathway Worldwide")
-    print("=" * 50)
-    print("\nServer running at http://localhost:5000")
+    print("=" * 55)
+    print("\nServer running at http://0.0.0.0:5000")
     print("\nPages:")
-    print("  /       - Public calendar display")
-    print("  /admin  - Admin dashboard")
+    print("  /       - Infinite autoplay image slider display")
+    print("  /admin  - Admin dashboard (manage events & images)")
     print("\nAPI Endpoints:")
-    print("  GET    /api/events                - Get all events")
-    print("  GET    /api/events/stats          - Get event counts")
-    print("  GET    /api/events/<id>           - Get single event")
-    print("  POST   /api/events                - Create event (with images)")
-    print("  PUT    /api/events/<id>           - Update event")
-    print("  DELETE /api/events/<id>           - Delete event")
-    print("  DELETE /api/events/<id>/images/<img_id> - Delete image")
-    print("  GET    /api/events/category/<cat> - Filter by category")
+    print("  GET    /api/events                     - Get all events")
+    print("  GET    /api/slider                     - Get slider images")
+    print("  GET    /api/events/stats               - Get event counts")
+    print("  GET    /api/events/<id>                - Get single event")
+    print("  POST   /api/events                     - Create event")
+    print("  PUT    /api/events/<id>                - Update event")
+    print("  DELETE /api/events/<id>                - Delete event")
+    print("  DELETE /api/events/<id>/images/<img>   - Delete image")
+    print("  GET    /api/events/category/<cat>      - Filter by category")
     print("\nPress Ctrl+C to stop the server\n")
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)
