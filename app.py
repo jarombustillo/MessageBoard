@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template, send_from_directory
+from flask import Flask, jsonify, request, render_template, send_from_directory, redirect
 from flask_cors import CORS
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -6,7 +6,7 @@ import sqlite3
 import os
 import uuid
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)
 
 # Configuration
@@ -99,6 +99,12 @@ def init_db():
 # ==================== PAGE ROUTES ====================
 
 @app.route('/')
+def index():
+    """Root route - redirect to display page."""
+    return render_template('display.html')
+
+
+@app.route('/display')
 def display_page():
     """Public display page - Infinite autoplay image slider."""
     return render_template('display.html')
@@ -108,6 +114,13 @@ def display_page():
 def admin_page():
     """Admin dashboard for managing events."""
     return render_template('admin.html')
+
+
+# Serve templates directly as well (for compatibility)
+@app.route('/templates/<path:filename>')
+def serve_template(filename):
+    """Serve template files directly."""
+    return render_template(filename)
 
 
 # ==================== FILE ROUTES ====================
