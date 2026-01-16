@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Calendar of Events</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pathway-navy': '#002E5D',
+                        'pathway-blue': '#0062B8',
+                        'pathway-light': '#E6F0FA',
+                        'pathway-sky': '#B3D4FC',
+                        'pathway-gold': '#FFB81C',
+                        'pathway-white': '#FFFFFF',
+                        'pathway-gray': '#63666A',
+                        'pathway-dark': '#1A1A2E',
+                    },
+                    fontFamily: {
+                        'sans': ['Libre Franklin', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-sans bg-pathway-light min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md px-6">
+        <!-- Login Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <!-- Header -->
+            <div class="bg-pathway-navy px-8 py-6 text-center">
+                <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-pathway-navy" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-white">Calendar of Events</h1>
+                <p class="text-pathway-sky text-sm mt-1">Admin Login</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="px-8 py-8">
+                {% if error %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    <span class="text-sm">{{ error }}</span>
+                </div>
+                {% endif %}
+
+                <form method="POST" class="space-y-5">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-pathway-gray mb-2">Username</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-pathway-gray" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <input type="text" id="username" name="username" required autofocus
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent transition-all"
+                                placeholder="Enter your username">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-pathway-gray mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-pathway-gray" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                                </svg>
+                            </div>
+                            <input type="password" id="password" name="password" required
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pathway-blue focus:border-transparent transition-all"
+                                placeholder="Enter your password">
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-pathway-navy text-white py-3 rounded-lg font-semibold hover:bg-pathway-blue transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/>
+                        </svg>
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <a href="/" class="text-sm text-pathway-blue hover:text-pathway-navy transition-colors flex items-center justify-center gap-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                        </svg>
+                        Back to Calendar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-sm text-pathway-gray mt-6">
+            © 2026 BYU-Pathway Worldwide
+        </p>
+    </div>
+</body>
+</html>

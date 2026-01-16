@@ -1,13 +1,21 @@
-from flask import Flask, jsonify, request, render_template, send_from_directory, redirect
+from flask import Flask, jsonify, request, render_template, send_from_directory, redirect, session, url_for
 from flask_cors import CORS
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from functools import wraps
 import sqlite3
 import os
 import uuid
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)
+
+# Secret key for sessions (use environment variable in production)
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+
+# Admin credentials (use environment variables in production)
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
 
 # Configuration
 DATABASE = 'calendar_events.db'
@@ -96,6 +104,28 @@ def init_db():
     conn.close()
 
 
+# ==================== AUTH HELPERS ====================
+
+def login_required(f):
+    """Decorator to require admin login for page routes."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('login_page'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def api_login_required(f):
+    """Decorator to require admin login for API routes (returns 401)."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return jsonify({'error': 'Authentication required'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ==================== PAGE ROUTES ====================
 
 @app.route('/')
@@ -110,7 +140,35 @@ def display_page():
     return render_template('display.html')
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    """Login page for admin access."""
+    if session.get('admin_logged_in'):
+        return redirect(url_for('admin_page'))
+    
+    error = None
+    if request.method == 'POST':
+        username = request.form.get('username', '')
+        password = request.form.get('password', '')
+        
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin_page'))
+        else:
+            error = 'Invalid username or password'
+    
+    return render_template('login.html', error=error)
+
+
+@app.route('/logout')
+def logout():
+    """Log out the admin user."""
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('login_page'))
+
+
 @app.route('/admin')
+@login_required
 def admin_page():
     """Admin dashboard for managing events."""
     return render_template('admin.html')
@@ -245,6 +303,7 @@ def get_event(event_id):
 
 
 @app.route('/api/events', methods=['POST'])
+@api_login_required
 def create_event():
     """Create a new event."""
     data = request.form.to_dict()
@@ -293,6 +352,7 @@ def create_event():
 
 
 @app.route('/api/events/<int:event_id>', methods=['PUT'])
+@api_login_required
 def update_event(event_id):
     """Update an existing event."""
     data = request.form.to_dict() if request.form else request.get_json()
@@ -340,6 +400,7 @@ def update_event(event_id):
 
 
 @app.route('/api/events/<int:event_id>', methods=['DELETE'])
+@api_login_required
 def delete_event(event_id):
     """Delete an event and its images."""
     conn = get_db()
@@ -368,6 +429,7 @@ def delete_event(event_id):
 
 
 @app.route('/api/events/<int:event_id>/images/<int:image_id>', methods=['DELETE'])
+@api_login_required
 def delete_image(event_id, image_id):
     """Delete a single image from an event."""
     conn = get_db()
@@ -427,7 +489,10 @@ if __name__ == '__main__':
     print("\nServer running at http://0.0.0.0:5000")
     print("\nPages:")
     print("  /       - Infinite autoplay image slider display")
-    print("  /admin  - Admin dashboard (manage events & images)")
+    print("  /login  - Admin login page")
+    print("  /admin  - Admin dashboard (requires login)")
+    print(f"\nDefault admin credentials: {ADMIN_USERNAME} / {ADMIN_PASSWORD}")
+    print("(Set ADMIN_USERNAME and ADMIN_PASSWORD env vars in production)")
     print("\nAPI Endpoints:")
     print("  GET    /api/events                     - Get all events")
     print("  GET    /api/slider                     - Get slider images")

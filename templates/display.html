@@ -254,30 +254,6 @@
             max-width: 400px;
         }
 
-        /* Pause on hover indicator */
-        .pause-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            z-index: 60;
-        }
-
-        .slider-container:hover .pause-indicator {
-            opacity: 1;
-        }
-
-        .slider-container.playing:hover .pause-indicator::after {
-            content: '⏸ Paused';
-        }
 
         /* Animation handled by JavaScript for reliability */
 
@@ -328,7 +304,6 @@
         <div class="slider-track" id="slider-track">
             <!-- Slides will be inserted here -->
         </div>
-        <div class="pause-indicator" id="pause-indicator"></div>
     </div>
 
     <!-- Progress Dots -->
@@ -502,15 +477,6 @@
             startAutoplay();
         }
 
-        // Pause on hover
-        const sliderContainer = document.getElementById('slider-container');
-        sliderContainer.addEventListener('mouseenter', () => {
-            isPlaying = false;
-        });
-
-        sliderContainer.addEventListener('mouseleave', () => {
-            isPlaying = true;
-        });
 
         function formatDate(dateStr) {
             const date = new Date(dateStr + 'T00:00:00');
