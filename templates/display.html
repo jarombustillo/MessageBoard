@@ -83,69 +83,6 @@
             z-index: 2;
         }
 
-        .slide-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-                to top,
-                rgba(0, 46, 93, 0.9) 0%,
-                rgba(0, 46, 93, 0.3) 30%,
-                transparent 60%
-            );
-            z-index: 3;
-        }
-
-        .slide-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 3rem 4rem;
-            color: white;
-            z-index: 4;
-        }
-
-        .slide-category {
-            display: inline-block;
-            padding: 0.4rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-        }
-
-        .slide-title {
-            font-size: 3rem;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 0.75rem;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .slide-description {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            max-width: 600px;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .slide-meta {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            font-size: 1rem;
-            opacity: 0.8;
-        }
-
-        .slide-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
         /* Header overlay */
         .header-overlay {
             position: fixed;
@@ -259,15 +196,6 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .slide-title {
-                font-size: 2rem;
-            }
-            .slide-description {
-                font-size: 1rem;
-            }
-            .slide-content {
-                padding: 2rem;
-            }
             .header-overlay {
                 padding: 1rem;
             }
@@ -376,55 +304,12 @@
         }
 
         function createSlide(slide, index) {
-            const categoryColors = {
-                'general': 'background: rgba(99, 102, 106, 0.9);',
-                'academic': 'background: rgba(59, 130, 246, 0.9);',
-                'social': 'background: rgba(236, 72, 153, 0.9);',
-                'spiritual': 'background: rgba(147, 51, 234, 0.9);',
-                'career': 'background: rgba(34, 197, 94, 0.9);'
-            };
-
-            const categoryEmojis = {
-                'general': '📌',
-                'academic': '📚',
-                'social': '🎉',
-                'spiritual': '🙏',
-                'career': '💼'
-            };
-
-            // Use the image URL directly from the API
             const imageUrl = slide.image;
 
             return `
                 <div class="slide">
                     <img class="slide-bg" src="${imageUrl}" alt="" loading="lazy">
-                    <img class="slide-img" src="${imageUrl}" alt="${escapeHtml(slide.title)}" loading="lazy">
-                    <div class="slide-overlay"></div>
-                    <div class="slide-content">
-                        <span class="slide-category" style="${categoryColors[slide.category] || categoryColors['general']}">
-                            ${categoryEmojis[slide.category] || '📅'} ${slide.category}
-                        </span>
-                        <h2 class="slide-title">${escapeHtml(slide.title)}</h2>
-                        <p class="slide-description">${escapeHtml(slide.description)}</p>
-                        <div class="slide-meta">
-                            <div class="slide-meta-item">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
-                                <span>${formatDate(slide.date)}</span>
-                            </div>
-                            ${slide.time ? `
-                                <div class="slide-meta-item">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                                    <span>${escapeHtml(slide.time)}</span>
-                                </div>
-                            ` : ''}
-                            ${slide.location ? `
-                                <div class="slide-meta-item">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                                    <span>${escapeHtml(slide.location)}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
+                    <img class="slide-img" src="${imageUrl}" alt="Slide ${index + 1}" loading="lazy">
                 </div>
             `;
         }
@@ -475,19 +360,6 @@
             updateSliderPosition();
             // Reset autoplay timer
             startAutoplay();
-        }
-
-
-        function formatDate(dateStr) {
-            const date = new Date(dateStr + 'T00:00:00');
-            return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
         }
     </script>
 </body>
