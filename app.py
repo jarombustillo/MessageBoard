@@ -51,14 +51,14 @@ def init_db():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            description TEXT NOT NULL,
-            event_date DATE NOT NULL,
-            event_time TEXT,
-            location TEXT,
+            title TEXT DEFAULT '',
+            description TEXT DEFAULT '',
+            event_date DATE DEFAULT '',
+            event_time TEXT DEFAULT '',
+            location TEXT DEFAULT '',
             category TEXT DEFAULT 'general' CHECK(category IN ('general', 'academic', 'social', 'spiritual', 'career')),
-            author TEXT NOT NULL,
-            author_initials TEXT NOT NULL,
+            author TEXT DEFAULT '',
+            author_initials TEXT DEFAULT '',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -308,10 +308,14 @@ def create_event():
     """Create a new event."""
     data = request.form.to_dict()
     
-    required_fields = ['title', 'description', 'event_date', 'author', 'author_initials']
-    for field in required_fields:
-        if not data.get(field):
-            return jsonify({'error': f'Missing required field: {field}'}), 400
+    # All fields are optional
+    title = data.get('title', '')
+    description = data.get('description', '')
+    event_date = data.get('event_date', '')
+    event_time = data.get('event_time', '')
+    location = data.get('location', '')
+    author = data.get('author', '')
+    author_initials = data.get('author_initials', '')
     
     category = data.get('category', 'general')
     if category not in ['general', 'academic', 'social', 'spiritual', 'career']:
@@ -322,9 +326,7 @@ def create_event():
     cursor.execute('''
         INSERT INTO events (title, description, event_date, event_time, location, category, author, author_initials)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (data['title'], data['description'], data['event_date'], 
-          data.get('event_time', ''), data.get('location', ''), category,
-          data['author'], data['author_initials']))
+    ''', (title, description, event_date, event_time, location, category, author, author_initials))
     
     event_id = cursor.lastrowid
     
