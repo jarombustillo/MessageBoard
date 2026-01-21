@@ -481,9 +481,9 @@ def get_events_by_category(category):
     conn.close()
     return jsonify(events)
 
-
+init_db()
 if __name__ == '__main__':
-    init_db()
+    #init_db()
     print("=" * 55)
     print("  Calendar of Events - Image Slider Server")
     print("  BYU-Pathway Worldwide")
