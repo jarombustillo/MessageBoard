@@ -506,4 +506,4 @@ if __name__ == '__main__':
     print("  DELETE /api/events/<id>/images/<img>   - Delete image")
     print("  GET    /api/events/category/<cat>      - Filter by category")
     print("\nPress Ctrl+C to stop the server\n")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    #app.run(host="0.0.0.0", port=5000, debug=True)
